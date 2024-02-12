@@ -35,6 +35,7 @@ contract one_to_many {
    //new
     mapping(string => address payable) addressOfSender;
     mapping(address => uint) balances;
+    mapping(string => uint) collateral;
     // Instance of the EndContractVerification contract
     EndContractVerification endContractVerification;
 
@@ -74,8 +75,10 @@ contract one_to_many {
         addressOfSender[newSenderKey] = newSender; 
 
         // Set the collateral amount
+        //this should be replaced for mapping
         collateralAmount = newCollateralAmount * 1e18;
-
+        //new
+        collateral[newSenderKey] = newCollateralAmount * 1e18;
         // Set the penalty amount
         penaltyAmount = newPenaltyAmountDecimals * 1e10; // Convert the new penalty amount from ethers (in decimals) to wei
 
@@ -90,7 +93,7 @@ contract one_to_many {
         );
     }
 
-        function transferCollateral() external {
+        function transferCollateral(string memory senderKey) external {
         require(
             msg.sender == owner,
             "Unauthorized. Only the owner can call this function."
@@ -98,7 +101,7 @@ contract one_to_many {
 
         // Check the payment status
         bool paymentStatus = endContractVerification.checkPaymentStatus(
-            collateralAmount,
+            collateral[senderKey],
             totalAmountSentBySender,
             penaltyAdded
         );
@@ -109,8 +112,8 @@ contract one_to_many {
                 address(this).balance >= collateralAmount,
                 "Insufficient contract balance to transfer the collateral."
             );
-            sender.transfer(collateralAmount);
-            emit CollateralTransferred(sender, collateralAmount);
+            sender.transfer(collateral[senderKey]);
+            emit CollateralTransferred(sender, collateral[senderKey]);
         } else {
             // If the payment status is false, revert the transaction with a message
             revert("Payment issue on the sender side.");
@@ -189,8 +192,12 @@ contract one_to_many {
     require(msg.sender == sender, "Only sender can acessc this");
     return  totalAmountSentBySender;
    }
-   
+
    function totalAmtSentByCurrentSender() public view returns(uint){
      return balances[sender];
    }
+
+    function getCurrentSenderCollateral(string memory senderKey) public view returns (uint) {
+        return collateral[senderKey];
+    }
 }
