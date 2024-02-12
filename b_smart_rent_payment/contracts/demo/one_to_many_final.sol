@@ -7,10 +7,8 @@ pragma solidity ^0.8.0;
 // rs 223 for every deposit - fr 3 eth
 // rs 257 for every payment - fr 1 eth
 
-
 //todo :
 /* 
-1)seperate collateral for each sender or store as whole and when ending return the required
 2)when payment is successful owner should return a key or something
 3)when owner not sending the key then check the verfication and end the contract
 4)optimization as much as possible
@@ -32,10 +30,10 @@ contract one_to_many {
     uint256 totalAmountSentBySender;
     bool penaltyAdded = false;
 
-   //new
     mapping(string => address payable) addressOfSender;
     mapping(address => uint) balances;
     mapping(string => uint) collateral;
+
     // Instance of the EndContractVerification contract
     EndContractVerification endContractVerification;
 
@@ -56,8 +54,8 @@ contract one_to_many {
         uint256 penaltyAmount,
         uint256 paymentAmount
     );
-     
-     // Owner Accessable Functions
+
+    // Owner Accessable Functions
 
     function setContractDetails(
         address payable newSender,
@@ -72,7 +70,7 @@ contract one_to_many {
         );
 
         // new
-        addressOfSender[newSenderKey] = newSender; 
+        addressOfSender[newSenderKey] = newSender;
 
         // Set the collateral amount
         //this should be replaced for mapping
@@ -93,7 +91,7 @@ contract one_to_many {
         );
     }
 
-        function transferCollateral(string memory senderKey) external {
+    function transferCollateral(string memory senderKey) external {
         require(
             msg.sender == owner,
             "Unauthorized. Only the owner can call this function."
@@ -132,15 +130,15 @@ contract one_to_many {
 
         emit PenaltyAdded(penaltyAmount, paymentAmount);
     }
-    
+
     //Sender Accessable Functions
 
-    function setSenderAddressByKey(string memory senderKey) external{
-      sender = addressOfSender[senderKey];
+    function setSenderAddressByKey(string memory senderKey) external {
+        sender = addressOfSender[senderKey];
     }
 
     // collateral depositing
-    function depositCollateral() external payable  {
+    function depositCollateral() external payable {
         require(msg.sender == sender, "Only sender can deposit");
         require(
             msg.value >= collateralAmount,
@@ -151,7 +149,7 @@ contract one_to_many {
     }
 
     //making payment
-    function makePayment() external payable  {
+    function makePayment() external payable {
         require(msg.sender == sender, "Only sender can make payment");
         require(msg.value >= paymentAmount, "Insufficient funds for payment");
         totalAmountSentBySender += msg.value;
@@ -181,23 +179,24 @@ contract one_to_many {
             return ("Payment Due Time Left", dueDate - block.timestamp);
         }
     }
-   
-   //common functions
-   function currentSender() public view returns (address){
-    require(msg.sender == sender, "Only sender can acessc this");
-    return  sender;
-   }
 
-   function totalSentBySender() public view returns(uint){
-    require(msg.sender == sender, "Only sender can acessc this");
-    return  totalAmountSentBySender;
-   }
+    //common functions
+    function currentSender() public view returns (address) {
+        require(msg.sender == sender, "Only sender can access this");
+        return sender;
+    }
 
-   function totalAmtSentByCurrentSender() public view returns(uint){
-     return balances[sender];
-   }
+    function totalSentBySender() public view returns (uint) {
+        return totalAmountSentBySender;
+    }
 
-    function getCurrentSenderCollateral(string memory senderKey) public view returns (uint) {
+    function totalAmtSentByCurrentSender() public view returns (uint) {
+        return balances[sender];
+    }
+
+    function getCurrentSenderCollateral(
+        string memory senderKey
+    ) public view returns (uint) {
         return collateral[senderKey];
     }
 }
