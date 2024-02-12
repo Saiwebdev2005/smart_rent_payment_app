@@ -34,7 +34,7 @@ contract one_to_many {
 
    //new
     mapping(string => address payable) addressOfSender;
-
+    mapping(address => uint) balances;
     // Instance of the EndContractVerification contract
     EndContractVerification endContractVerification;
 
@@ -152,6 +152,7 @@ contract one_to_many {
         require(msg.sender == sender, "Only sender can make payment");
         require(msg.value >= paymentAmount, "Insufficient funds for payment");
         totalAmountSentBySender += msg.value;
+        balances[sender] += msg.value;
         dueDate = block.timestamp + 1 minutes;
 
         if (penaltyAdded && msg.value >= paymentAmount) {
@@ -188,5 +189,8 @@ contract one_to_many {
     require(msg.sender == sender, "Only sender can acessc this");
     return  totalAmountSentBySender;
    }
-
+   
+   function totalAmtSentByCurrentSender() public view returns(uint){
+     return balances[sender];
+   }
 }
