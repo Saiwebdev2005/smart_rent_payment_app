@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-
+import Button from "../Button/Button";
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -46,9 +46,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className=" order-1 md:order-none">
               {/* Sign-in button on the right */}
-              <button className="bg-c1 px-5 py-3 rounded-3xl text-black hover:text-gray-900">
-                Sign In
-              </button>
+              <Button name="Sign In"/>
             </div>
           </nav>
         </div>
@@ -77,9 +75,7 @@ const Navbar: React.FC = () => {
                 <a href="#">Contact</a>
               </div>
               <div>
-                <button className="py-3 px-6 bg-c1 rounded-3xl text-c4">
-                  Signup
-                </button>
+              <Button name="Sign In"/>
               </div>
             </nav>
           </div>

@@ -1,7 +1,7 @@
 // HeroSection.tsx
 
 import React from "react";
-
+import Button from "@/components/Button/Button";
 const HeroSection: React.FC = () => {
   return (
     <div className="mt-44">
@@ -13,9 +13,7 @@ const HeroSection: React.FC = () => {
           <h3 className="text-lg md:text-4xl mb-8 text-c2">
             Your Hero Subheading
           </h3>
-          <button className="bg-c1 text-c4 px-6 py-3 rounded-full hover:bg-opacity-80 transition duration-300">
-            Get Started
-          </button>
+          <Button name="Get Started"/>
         </div>
       </section>
     </div>
