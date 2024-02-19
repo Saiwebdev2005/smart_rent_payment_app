@@ -5,7 +5,6 @@ import FeatureSection from '../FeatureSection/FeatureSection'
 function HomeSection() {
   return (
     <div className=''>
-      <Navbar/>
       <HeroSection/>
       <FeatureSection/>
     </div>
