@@ -1,27 +1,16 @@
-import { ethers } from "hardhat";
-
+//we only need to deploy the main contract the subcontract are added when we compile it
+//npx hardhat run --network localhost scripts/deploy.ts
+import hre from "hardhat"
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
-
-  const lockedAmount = ethers.parseEther("0.001");
-
-  const lock = await ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  const Payment = await hre.ethers.getContractFactory("one_to_many_Optimized");
+  const payment = await Payment.deploy();
+  console.log(`The Payment is deployed in ${payment.target}`)
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+// Run the deployment
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
