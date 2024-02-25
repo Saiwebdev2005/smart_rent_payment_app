@@ -200,9 +200,6 @@ contract one_to_many_Optimized {
 
     //common functions
     function currentSender() public view returns (address) {
-        if(msg.sender != sender){
-            revert Payment_OnlySenderAccessible();
-        }
         return sender;
     }
 
@@ -218,5 +215,16 @@ contract one_to_many_Optimized {
         string memory senderKey
     ) public view returns (uint) {
         return collateral[senderKey];
+    }
+     function getOwner() public view returns (address) {
+        return owner;
+    }
+     function getPenaltyAmount() external view returns (uint256) {
+        return penaltyAmount;
+    }
+
+    // Getter function for paymentAmount
+    function getPaymentAmount() external view returns (uint256) {
+        return paymentAmount;
     }
 }
