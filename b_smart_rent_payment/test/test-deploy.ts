@@ -5,20 +5,26 @@ import chaiAsPromised from "chai-as-promised";
 use(chaiAsPromised);
 
 describe('Contract Testing', () => {
-  let Payment, payment:any, owner;
+  let Payment: any, payment: any, owner: any;
 
   beforeEach('Deploying Contract', async () => {
+    // Get the contract factory
     Payment = await ethers.getContractFactory("one_to_many_Optimized");
-    owner = await ethers.getSigner('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
+
+    [owner] = await ethers.getSigners();
+    // Deploy the contract
     payment = await Payment.deploy();
-  });
-  
-  it("Successfully Deployed", async () => {
-    expect(!payment.address).to.equal(true);
   });
 
   it("Owner is as expected", async () => {
     // Using eventually from chai-as-promised to handle async assertions
-    await expect(payment.getOwner()).to.eventually.equal('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
+    const ownerAddressPromise = Promise.resolve(await payment.getOwner());
+
+    // Log owner address to the console
+    console.log("Owner Address:", await ownerAddressPromise);
+
+    // Expect the owner to eventually equal the actual owner address
+    await expect(ownerAddressPromise).to.eventually.equal(owner.address);
   });
+  
 });

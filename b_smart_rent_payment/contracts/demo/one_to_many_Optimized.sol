@@ -146,9 +146,9 @@ contract one_to_many_Optimized {
 
     //Sender Accessable Functions
 
-    function setSenderAddressByKey(string memory senderKey) external {
-        sender = addressOfSender[senderKey];
-    }
+        function setSenderAddressByKey(string memory senderKey) external {
+            sender = addressOfSender[senderKey];
+        }
 
     // collateral depositing
     function depositCollateral() external payable {

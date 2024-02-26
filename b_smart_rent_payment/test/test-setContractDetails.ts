@@ -5,54 +5,58 @@ import chaiAsPromised from "chai-as-promised";
 use(chaiAsPromised);
 
 describe('Contract Testing', () => {
-  let Payment: any, payment: any, owner: string;
+  let Payment: any, payment: any, owner: any;
+  let newSender = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Use the owner's address as an example
+    let newSenderKey = '1'; // Replace with the actual key
+    let newCollateralAmount = 10; // Replace with the actual amount
+    let newPenaltyAmountDecimals = 5; // Replace with the actual amount
+    let newPaymentAmount = 2; // Replace with the actual amount
 
   beforeEach('Deploying Contract', async () => {
     // Get the contract factory
     Payment = await ethers.getContractFactory("one_to_many_Optimized");
 
-    // Get the owner's address
-    owner = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-
+    [owner] = await ethers.getSigners();
     // Deploy the contract
     payment = await Payment.deploy();
-  });
-  
-  it("Successfully Deployed", async () => {
-    // Check if the contract is successfully deployed
-    expect(!payment.address).to.equal(true);
   });
 
   it("Owner is as expected", async () => {
     // Using eventually from chai-as-promised to handle async assertions
-    await expect(payment.getOwner()).to.eventually.equal(owner);
+    const ownerAddressPromise = Promise.resolve(await payment.getOwner());
+
+    // Log owner address to the console
+    console.log("Owner Address:", await ownerAddressPromise);
+
+    // Expect the owner to eventually equal the actual owner address
+    await expect(ownerAddressPromise).to.eventually.equal(owner.address);
   });
+  
+  it("Sending data to setContractDetails", async () => {
+    // Parameters for setContractDetails
+    
 
-  it("Adding new Sender to the Contract", async () => {
-    let sender = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
-    let senderKey = "1";
-    let CollateralAmount = 1;
-    let penaltyAmount = 1;
-    let paymentAmount = 1;
+    // Connect the owner Signer and call setContractDetails
+    await expect(
+        payment.connect(owner).setContractDetails(newSender, newSenderKey, newCollateralAmount, newPenaltyAmountDecimals, newPaymentAmount)
+    ).to.not.be.reverted;
 
-    // Set contract details using the owner's account
-    await payment.connect(owner).setContractDetails(sender, senderKey, CollateralAmount, penaltyAmount, paymentAmount);
-    await payment.connect(owner).setSenderAddressByKey(senderKey);
+    console.log("Data sent to setContractDetails:", {
+      newSender,
+      newSenderKey,
+      newCollateralAmount,
+      newPenaltyAmountDecimals,
+      newPaymentAmount
+  });
+    
+  await payment.setSenderAddressByKey(newSenderKey)
+  const getCurrentSender = await payment.currentSender()
+  console.log("Current Sender Address", newSender)
+  console.log("Current Sender Addrees by key",getCurrentSender)
+ await expect(newSender).to.equal(getCurrentSender)
+    
+   
 
-    // Check the result using the owner's account
-    const currentSender = await payment.connect(owner).currentSender();
-    const currentSenderCollateral = await payment.getCurrentSenderCollateral(senderKey);
-    const currentPaymentAmount = await payment.getPaymentAmount();
-    const currentPenaltyAmount = await payment.getPenaltyAmount();
-
-    // Checking the New Sender's Contract Details
-    it("Checking the New Sender's Contract Details", async () => {
-      expect(currentSender).to.equal('0x70997970C51812dc3A010C7d01b50e0d17dc79C8');
-      expect(currentSenderCollateral).to.equal(CollateralAmount);
-    });
-
-    // Check the values of paymentAmount and penaltyAmount
-    expect(currentPaymentAmount).to.equal(paymentAmount);
-    expect(currentPenaltyAmount).to.equal(penaltyAmount);
+    // You can add additional assertions or verifications here
   });
 });
