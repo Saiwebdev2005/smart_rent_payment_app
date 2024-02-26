@@ -66,5 +66,11 @@ describe('Contract Testing', () => {
     expect(newPaymentAmount * 1e18).to.equal(parseInt(getPaymentAmount.toString(), 10));
     expect(newPenaltyAmountDecimals * 1e10).to.equal(parseInt(getPenaltyAmount.toString(), 10));
     expect(newCollateralAmount * 1e18).to.equal(parseInt(getCollateralAmount.toString(), 10));
+
+    //error occurs in this 
+    // await payment.connect(newSender).depositCollateral({value:newCollateralAmount})
+    //   const getCollateralAmountNew = await payment.getCollateralAmount();
+    //   console.log("Collateral Amount in contract",getCollateralAmountNew)
+    //   expect(newCollateralAmount * 1e18).to.equal(parseInt(getCollateralAmount.toString(), 10));
   });
 });

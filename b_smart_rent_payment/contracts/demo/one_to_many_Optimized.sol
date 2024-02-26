@@ -227,4 +227,8 @@ contract one_to_many_Optimized {
     function getPaymentAmount() external view returns (uint256) {
         return paymentAmount;
     }
+
+    function getCollateralAmount() external view returns (uint256) {
+        return collateralAmount;
+    }
 }
