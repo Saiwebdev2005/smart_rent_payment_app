@@ -1,7 +1,7 @@
-import { ethers } from "hardhat";
 import { expect, use } from "chai";
-import { Signer } from "ethers";
 import chaiAsPromised from "chai-as-promised";
+import { Signer } from "ethers";
+import { ethers } from "hardhat";
 
 use(chaiAsPromised);
 
@@ -84,5 +84,19 @@ describe('Contract Testing', () => {
 
     const paymentMade = await payment.totalAmtSentByCurrentSender();
     console.log("Payment sent by sender", paymentMade.toString());
+
+    //runs and deposit payment until the collateral is crossed
+   //runs and deposit payment until the collateral is crossed
+for (let i = 0; i < newCollateralAmount; i++) {
+  await expect(payment.connect(sender).makePayment({ value: ethers.parseEther(newPaymentAmount.toString()) }));
+
+  const paymentMade = await payment.totalAmtSentByCurrentSender();
+  console.log(`Payment ${i + 1} sent by sender:`, paymentMade.toString());
+
+  if (BigInt(paymentMade.toString()) >= BigInt(getCollateralAmount)) {
+    break;
+  }
+}
+
   });
 });
