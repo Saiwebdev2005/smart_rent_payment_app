@@ -133,19 +133,16 @@ function transferCollateral(string memory senderKey) external onlyOwner {
         penaltyAdded
     );
 
-    if (!paymentStatus) {
-        if (totalAmountSentBySender < collateralAmount) {
-            revert("Payment issue on the sender side");
-        } else {
-            // Transfer collateral if payment status is false but total amount is greater than or equal to collateral
-            currentSender.transfer(senderCollateral[senderKey]);
-            emit CollateralTransferred(currentSender, senderCollateral[senderKey]);
-            delete addressOfSender[senderKey];
-            delete senderCollateral[senderKey];
-        }
+    if (!paymentStatus || totalAmountSentBySender >= collateralAmount) {
+        // Transfer collateral if payment status is false or total amount is greater than or equal to collateral
+        currentSender.transfer(senderCollateral[senderKey]);
+        emit CollateralTransferred(currentSender, senderCollateral[senderKey]);
     } else {
-        revert("Payment issue on the sender side");
+        revert("Payment not met by the sender side");
     }
+
+    delete addressOfSender[senderKey];
+    delete senderCollateral[senderKey];
 }
 
 
