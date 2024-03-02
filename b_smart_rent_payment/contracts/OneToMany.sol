@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 // rs 6800 for contract initialization
 // rs 286 for every new sender entry
@@ -126,26 +126,28 @@ contract OneToManyOptimized {
      * @dev Transfers collateral to the sender after successful verification.
      * @param senderKey The unique key for the sender.
      */
-    function transferCollateral(string memory senderKey) external onlyOwner {
-        bool paymentStatus = endContractVerification.checkPaymentStatus(
-            senderCollateral[senderKey],
-            totalAmountSentBySender,
-            penaltyAdded
-        );
+function transferCollateral(string memory senderKey) external onlyOwner {
+    bool paymentStatus = endContractVerification.checkPaymentStatus(
+        senderCollateral[senderKey],
+        totalAmountSentBySender,
+        penaltyAdded
+    );
 
-         if (!paymentStatus) {
+    if (!paymentStatus) {
+        if (totalAmountSentBySender < collateralAmount) {
             revert("Payment issue on the sender side");
+        } else {
+            // Transfer collateral if payment status is false but total amount is greater than or equal to collateral
+            currentSender.transfer(senderCollateral[senderKey]);
+            emit CollateralTransferred(currentSender, senderCollateral[senderKey]);
+            delete addressOfSender[senderKey];
+            delete senderCollateral[senderKey];
         }
-
-        if (address(this).balance < collateralAmount) {
-            revert("Insufficient contract balance to transfer the collateral");
-        }
-
-        currentSender.transfer(senderCollateral[senderKey]);
-        emit CollateralTransferred(currentSender, senderCollateral[senderKey]);
-        delete addressOfSender[senderKey];
-        delete senderCollateral[senderKey];
+    } else {
+        revert("Payment issue on the sender side");
     }
+}
+
 
     /**
      * @dev Adds penalty to the payment amount after due date.
