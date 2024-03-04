@@ -1,13 +1,33 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import Button from "../Button/Button";
+import { Web3 } from "web3";
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+  const [connectedAccount, setConnectedAccount] = useState("null");
+
+  async function connectMetamask() {
+    //check metamask is installed
+    if (window.ethereum) {
+      // instantiate Web3 with the injected provider
+      const web3 = new Web3(window.ethereum);
+
+      //request user to connect accounts (Metamask will prompt)
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      //get the connected accounts
+      const accounts = await web3.eth.getAccounts();
+
+      //show the first connected account in the react page
+      setConnectedAccount(accounts[0]);
+    } else {
+      alert("Please download metamask");
+    }
+  }
 
   return (
     <div className="w-full mb-24">
@@ -47,9 +67,18 @@ const Navbar: React.FC = () => {
                 Contact
               </a>
             </div>
+
             <div className=" order-1 md:order-none">
-              {/* Sign-in button on the right */}
-              <Button name="Connect" />
+              {connectedAccount ? (
+                <p>{connectedAccount}</p>
+              ) : (
+                <button
+                  className="bg-c1 text-c4 font-semibold px-6 py-3 rounded-full hover:bg-opacity-80 transition duration-300"
+                  onClick={() => connectMetamask()}
+                >
+                  Connect to Metamask
+                </button>
+              )}
             </div>
           </nav>
         </div>
@@ -80,7 +109,12 @@ const Navbar: React.FC = () => {
                 <Link href="/Pricing">Pricing</Link>
               </div>
               <div>
-                <Button name="Connect" />
+                <button
+                  className="bg-c1 text-c4 font-semibold px-6 py-3 rounded-full hover:bg-opacity-80 transition duration-300"
+                  onClick={() => connectMetamask()}
+                >
+                  Connect to Metamask
+                </button>
               </div>
             </nav>
           </div>
