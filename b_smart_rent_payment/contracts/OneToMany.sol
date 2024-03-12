@@ -24,7 +24,7 @@ error Payment_DueDateNotPassed();
 error Payment_OnlySenderAccessible();
 error Payemt_InsufficientFunds();
 
-contract one_to_many_Optimized {
+contract OneToMany {
 
     //State Variables
     address payable owner;
