@@ -59,17 +59,19 @@ function Contract() {
  // Function to get and set the chain ID
  const getChainId = async () => {
   if (web3) {
-    try {
-      const chainId = await web3.eth.getChainId();
-      console.log('Chain ID retrieved:', chainId);
-      setChainId(chainId); // Update the chain ID state
-    } catch (error) {
-      console.error('Error getting chain ID:', error);
-    }
+     try {
+       const chainIdBigInt = await web3.eth.getChainId();
+       // Convert the BigInt to a regular number
+       const chainId = Number(chainIdBigInt);
+       console.log('Chain ID retrieved:', chainId);
+       setChainId(chainId); // Update the chain ID state with the number
+     } catch (error) {
+       console.error('Error getting chain ID:', error);
+     }
   } else {
-    console.log('Web3 is not initialized');
+     console.log('Web3 is not initialized');
   }
-};
+ };
 
 // Call getChainId when web3 is initialized
 useEffect(() => {

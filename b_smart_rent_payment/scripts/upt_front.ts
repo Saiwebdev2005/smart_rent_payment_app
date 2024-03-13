@@ -44,16 +44,29 @@ async function updateContractAddresses(OneToManyAddress: Address) {
     console.log("Sending Address");
 
     try {
-        // Convert address to JSON string for file
-        const addressJson = JSON.stringify({ contractAddress: OneToManyAddress }, null, 2);
+        // Obtain the chain ID of the current network
+        const chainId = hre.network.config.chainId;
 
-        // Write address to file
+        // Check if chainId is defined
+        if (chainId === undefined) {
+            console.error("Chain ID is undefined. Cannot update contract addresses.");
+            return; // Exit the function if chainId is undefined
+        }
+
+        // Prepare the JSON structure with the chain ID and contract address
+        const addressJson = JSON.stringify({ [chainId]: OneToManyAddress }, null, 2);
+
+        // Append to the existing file or overwrite it based on your needs
+        // This example overwrites the file
         fs.writeFileSync(FRONT_END_ADDRESSES_FILE, addressJson);
 
-        console.log("Address successfully sent -> ", OneToManyAddress);
+        console.log(`Address successfully sent for chain ID ${chainId} -> `, OneToManyAddress);
     } catch (error) {
         console.error("Error updating contract addresses:", error);
     }
 }
+
+
+
 
 main().catch(console.error);

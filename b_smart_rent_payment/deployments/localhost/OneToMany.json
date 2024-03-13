@@ -1,0 +1,32 @@
+{
+  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "abi": [
+    "constructor()",
+    "error Payemt_InsufficientFunds()",
+    "error Payment_DueDateNotPassed()",
+    "error Payment_OnlyOwnerCanEntered()",
+    "error Payment_OnlySenderAccessible()",
+    "event CollateralDeposited(address indexed sender, uint256 amount)",
+    "event CollateralTransferred(address indexed sender, uint256 amount)",
+    "event ContractInitialized(address indexed sender, uint256 collateralAmount, uint256 penaltyAmount, uint256 paymentAmount)",
+    "event PaymentMade(address indexed sender, uint256 amount)",
+    "event PenaltyAdded(uint256 penaltyAmount, uint256 newPaymentAmount)",
+    "function RemainingTimeForNextPayment() view returns (string, uint256)",
+    "function addPenalty()",
+    "function currentSender() view returns (address)",
+    "function depositCollateral() payable",
+    "function getCollateralAmount() view returns (uint256)",
+    "function getCurrentSenderCollateral(string senderKey) view returns (uint256)",
+    "function getOwner() view returns (address)",
+    "function getPaymentAmount() view returns (uint256)",
+    "function getPenaltyAmount() view returns (uint256)",
+    "function makePayment() payable",
+    "function paymentAmount() view returns (uint256)",
+    "function setContractDetails(address newSender, string newSenderKey, uint256 newCollateralAmount, uint256 newPenaltyAmountDecimals, uint256 newPaymentAmount)",
+    "function setSenderAddressByKey(string senderKey)",
+    "function totalAmtSentByCurrentSender() view returns (uint256)",
+    "function totalSentBySender() view returns (uint256)",
+    "function transferCollateral(string senderKey)"
+  ],
+  "numDeployments": 1
+}
