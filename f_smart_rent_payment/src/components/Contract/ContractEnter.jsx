@@ -1,13 +1,15 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import Web3 from 'web3'
-import {abi,contractAddress} from "../../constants"
+import {abi,contractAddressVar} from "../../constants"
 function Contract() {
  
  // State to hold the Web3 instance and the contract instance
  const [web3, setWeb3] = useState(null);
  const [contract, setContract] = useState(null);
  const [chainId, setChainId] = useState(null);
+
+ const contractAddress = contractAddressVar['31337'];
  useEffect(() => {
     // This effect runs once when the component mounts
     // It initializes the Web3 instance and the contract instance
@@ -34,28 +36,38 @@ function Contract() {
  // Function to call a contract function
  // This can be used to interact with the smart contract
  const callContractFunction = async (functionName, params = [], msgValue = 0) => {
-    // Check if the Web3 and contract instances have been initialized
-    if (!web3 || !contract) {
-      console.log('Web3 or contract is not initialized');
-      return;
-    }
-
-    try {
-      // Attempt to call the specified contract function
-      // The functionName parameter specifies which function to call
-      // The params array contains any arguments to pass to the function
-      // The msgValue parameter specifies the amount of Ether to send with the transaction (if any)
-      // Note: If the function is read-only (does not modify the blockchain state), use .call() instead of .send()
-      const result = await contract.methods[functionName](...params).send({
-        from: window.ethereum.selectedAddress, // The address from which to send the transaction
-        value: web3.utils.toWei(msgValue.toString(), 'ether') // Convert the msgValue from Ether to Wei
-      });
-      console.log(result);
-    } catch (error) {
-      // Log any errors that occur during the transaction
-      console.error('Error calling contract function:', error);
-    }
+  // Check if the Web3 and contract instances have been initialized
+  if (!web3 || !contract) {
+     console.log('Web3 or contract is not initialized');
+     return;
+  }
+ 
+  try {
+     // Determine if the function is read-only or state-modifying
+     const isReadOnly = msgValue === 0; // Assuming msgValue is 0 for read-only calls
+ 
+     // Attempt to call the specified contract function
+     // The functionName parameter specifies which function to call
+     // The params array contains any arguments to pass to the function
+     // The msgValue parameter specifies the amount of Ether to send with the transaction (if any)
+     let result;
+     if (isReadOnly) {
+       // For read-only calls, use .call()
+       result = await contract.methods[functionName](...params).call();
+     } else {
+       // For state-modifying calls, use .send()
+       result = await contract.methods[functionName](...params).send({
+         from: window.ethereum.selectedAddress, // The address from which to send the transaction
+         value: web3.utils.toWei(msgValue.toString(), 'ether') // Convert the msgValue from Ether to Wei
+       });
+     }
+     console.log(result);
+  } catch (error) {
+     // Log any errors that occur during the transaction
+     console.error('Error calling contract function:', error);
+  }
  };
+ 
  // Function to get and set the chain ID
  const getChainId = async () => {
   if (web3) {
@@ -85,7 +97,8 @@ useEffect(() => {
       <div className='flex flex-col justify-center items-center space-y-6 max-w-5xl mx-auto'>
        <h1 className='text-4xl'>Lets Start the Contract</h1>
        <p>Chain ID : {chainId}</p>
-       <button onClick={() => callContractFunction('yourFunctionName', [param1, param2], 0.1)}>Call Contract Function</button>
+       <p>Contract Address is {contractAddress}</p>
+       <button className='bg-c1 text-c4 font-semibold px-6 py-3 rounded-full hover:bg-opacity-80 transition duration-300' onClick={() => callContractFunction('getOwner', [], 0)}>Get Contract Owner</button>
       </div>
     </div>
   )
